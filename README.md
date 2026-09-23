@@ -4,9 +4,15 @@ A React web application for the Innorik NSS Developer Technical Assessment (fron
 
 ## Current progress
 
-Project foundation: React, TypeScript, Vite, Tailwind CSS, Lucide icons, and ESLint.
-Task management features will be added in subsequent development steps. The application
-will use mocked local data with no backend integration.
+Built with React, TypeScript, Vite, Tailwind CSS, Lucide icons, and ESLint.
+
+- Responsive dashboard with six mocked tasks
+- Task title, description, status, and created date
+- Total, pending, in-progress, and completed counts calculated from task data
+- Reusable statistics cards, status badges, and task list
+
+This checkpoint is read-only. Task creation, editing, deletion, and status changes
+will follow. All data is local mock data; no backend or API is used.
 
 ## Requirements
 
@@ -38,9 +44,17 @@ npm run preview
 
 ```text
 src/
+  components/
+    dashboard/  Reusable statistics cards and calculated task statistics
+    tasks/      Task list and status badge
+  data/         Typed mock tasks
+  pages/        Dashboard page composing the components
+  types/        Shared task model and supported statuses
+  utils/        Shared date formatting
   App.tsx       Application entry component
   index.css     Tailwind import and base styles
   main.tsx      React root
 ```
 
-Feature components, task types, and mock data will be introduced as those features are built.
+Created dates are stored as ISO timestamps and displayed in UTC for consistent dates
+across time zones. Statistics are derived from the task array rather than hardcoded.
