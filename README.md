@@ -15,10 +15,15 @@ Built with React, TypeScript, Vite, Tailwind CSS, Lucide icons, and ESLint.
 - Keyboard-accessible dialog with Escape to close and Cancel to discard changes
 - Delete tasks with confirmation (Cancel is focused by default)
 - Change status directly from the task list and see statistics update immediately
+- Search task titles and descriptions and combine the search with a status filter
+- Clear filters and distinguish an empty list from a search with no matches
 
 Tasks are held in React state, starting with local mock data; no backend or API is used.
 Changes last for the current page session and reset on refresh. New tasks receive a unique
 ID and creation timestamp. Editing preserves both. Statistics update immediately after saving.
+Search ignores capitalization and surrounding whitespace. Dashboard counts always include
+all tasks, while the list shows the matching count. Saving a task clears filters so the saved
+task is visible. Changing a status keeps filters active, so a task may leave the filtered list.
 
 ## Requirements
 
@@ -53,7 +58,7 @@ src/
   components/
     common/     Reusable native modal dialog
     dashboard/  Reusable statistics cards and calculated task statistics
-    tasks/      Task list, status controls, add/edit form, and delete confirmation
+    tasks/      Task list, filters, status controls, add/edit form, and delete confirmation
   data/         Typed mock tasks
   pages/        Dashboard page composing the components
   types/        Shared task model and supported statuses

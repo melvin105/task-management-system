@@ -5,18 +5,21 @@ import { TaskStatusSelect } from './TaskStatusSelect'
 
 interface TaskListProps {
   tasks: Task[]
+  hasTasks: boolean
+  onClearFilters: () => void
   onEdit: (task: Task) => void
   onDelete: (task: Task) => void
   onStatusChange: (id: string, status: TaskStatus) => void
 }
 
-export function TaskList({ tasks, onEdit, onDelete, onStatusChange }: TaskListProps) {
+export function TaskList({ tasks, hasTasks, onClearFilters, onEdit, onDelete, onStatusChange }: TaskListProps) {
   if (tasks.length === 0) {
     return (
       <div className="px-6 py-16 text-center">
         <ClipboardList className="mx-auto text-slate-400" size={32} aria-hidden="true" />
-        <h3 className="mt-4 font-semibold text-slate-900">No tasks yet</h3>
-        <p className="mt-2 text-sm text-slate-500">Choose Add task to start a new list.</p>
+        <h3 className="mt-4 font-semibold text-slate-900">{hasTasks ? 'No matching tasks' : 'No tasks yet'}</h3>
+        <p className="mt-2 text-sm text-slate-500">{hasTasks ? 'Try another search or change the status filter.' : 'Choose Add task to start a new list.'}</p>
+        {hasTasks && <button type="button" onClick={onClearFilters} className="mt-4 min-h-11 rounded-lg px-4 text-sm font-medium text-teal-800 hover:bg-teal-50">Clear filters</button>}
       </div>
     )
   }

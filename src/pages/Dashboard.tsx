@@ -6,6 +6,8 @@ import { initialTasks } from '../data/tasks'
 import { TaskForm } from '../components/tasks/TaskForm'
 import type { Task, TaskInput, TaskStatus } from '../types/task'
 import { DeleteTaskDialog } from '../components/tasks/DeleteTaskDialog'
+import { TaskFilters } from '../components/tasks/TaskFilters'
+import type { StatusFilter } from '../components/tasks/TaskFilters'
 
 export function Dashboard() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
@@ -13,11 +15,28 @@ export function Dashboard() {
   const [announcement, setAnnouncement] = useState('')
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null)
   const addButtonRef = useRef<HTMLButtonElement>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
+  const [query, setQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('All')
+  const normalizedQuery = query.trim().toLowerCase()
+  const visibleTasks = tasks.filter((task) => (
+    (statusFilter === 'All' || task.status === statusFilter)
+    && `${task.title} ${task.description}`.toLowerCase().includes(normalizedQuery)
+  ))
+
+  function clearFilters() {
+    setQuery('')
+    setStatusFilter('All')
+    searchRef.current?.focus()
+  }
 
   function changeStatus(id: string, status: TaskStatus) {
     setTasks((current) => current.map((task) => task.id === id ? { ...task, status } : task))
     const task = tasks.find((item) => item.id === id)
     if (task) setAnnouncement(`Updated ${task.title} to ${status}.`)
+    if (statusFilter !== 'All' && status !== statusFilter) {
+      searchRef.current?.focus()
+    }
   }
 
   function deleteTask() {
@@ -40,6 +59,10 @@ export function Dashboard() {
       setAnnouncement(`Created task: ${values.title}.`)
     }
     setEditor(null)
+    // Show the saved task even if the previous filters would hide it.
+    setQuery('')
+    setStatusFilter('All')
+    requestAnimationFrame(() => addButtonRef.current?.focus())
   }
 
   return (
@@ -82,13 +105,17 @@ export function Dashboard() {
             </div>
             <span className="shrink-0 rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}</span>
           </div>
+          <TaskFilters query={query} status={statusFilter} onQueryChange={setQuery} onStatusChange={setStatusFilter} onClear={clearFilters} searchRef={searchRef} />
+          <p role="status" aria-atomic="true" className="border-b border-slate-100 px-5 py-3 text-xs text-slate-500 sm:px-6">
+            Showing {visibleTasks.length} of {tasks.length} tasks. Overview counts include all tasks.
+          </p>
           <div aria-hidden="true" className="hidden grid-cols-[minmax(0,1fr)_9rem_8rem_9rem] gap-4 border-b border-slate-100 bg-slate-50/70 px-6 py-3 text-xs font-medium text-slate-500 lg:grid">
             <span>Task</span>
             <span>Status</span>
             <span>Created date</span>
             <span className="text-right">Actions</span>
           </div>
-          <TaskList tasks={tasks} onEdit={(task) => setEditor({ task })} onDelete={setTaskToDelete} onStatusChange={changeStatus} />
+          <TaskList tasks={visibleTasks} hasTasks={tasks.length > 0} onClearFilters={clearFilters} onEdit={(task) => setEditor({ task })} onDelete={setTaskToDelete} onStatusChange={changeStatus} />
         </section>
         <footer className="mt-6 text-center text-xs leading-5 text-slate-500">
           A little progress, every day.
