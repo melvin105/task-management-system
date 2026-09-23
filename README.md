@@ -5,6 +5,8 @@ A React web application for the Innorik NSS Developer Technical Assessment (fron
 ## Current progress
 
 Built with React, TypeScript, Vite, Tailwind CSS, Lucide icons, and ESLint.
+Montserrat is bundled locally through Fontsource. Custom dropdowns use Radix Select
+for keyboard navigation, type-ahead selection, focus management, and popup positioning.
 
 - Responsive dashboard with six mocked tasks
 - Task title, description, status, and created date
@@ -17,6 +19,7 @@ Built with React, TypeScript, Vite, Tailwind CSS, Lucide icons, and ESLint.
 - Change status directly from the task list and see statistics update immediately
 - Search task titles and descriptions and combine the search with a status filter
 - Clear filters and distinguish an empty list from a search with no matches
+- Consistent custom dropdowns with status colors, selection indicators, and keyboard support
 
 Tasks are held in React state, starting with local mock data; no backend or API is used.
 Changes last for the current page session and reset on refresh. New tasks receive a unique
@@ -51,12 +54,28 @@ npm run preview
 `build` checks TypeScript and generates the production files in `dist/`.
 `preview` serves that build locally.
 
+## Browser checks
+
+```sh
+npx playwright install chromium
+npm run test:e2e
+```
+
+The Playwright checks cover dropdown selection and dismissal, filtering, task creation
+inside the dialog, font loading, and horizontal overflow at 320px, 375px, 768px, and
+1440px viewport widths. To use an installed Microsoft Edge browser in PowerShell:
+
+```powershell
+$env:PLAYWRIGHT_CHANNEL = 'msedge'
+npm.cmd run test:e2e
+```
+
 ## Project structure
 
 ```text
 src/
   components/
-    common/     Reusable native modal dialog
+    common/     Reusable native modal dialog and custom select
     dashboard/  Reusable statistics cards and calculated task statistics
     tasks/      Task list, filters, status controls, add/edit form, and delete confirmation
   data/         Typed mock tasks

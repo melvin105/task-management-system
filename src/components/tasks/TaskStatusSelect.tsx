@@ -1,4 +1,5 @@
-import { TASK_STATUSES } from '../../types/task'
+import { Select } from '../common/Select'
+import { statusOptions } from './statusOptions'
 import type { Task, TaskStatus } from '../../types/task'
 
 const statusClasses: Record<TaskStatus, string> = {
@@ -14,13 +15,13 @@ interface TaskStatusSelectProps {
 
 export function TaskStatusSelect({ task, onChange }: TaskStatusSelectProps) {
   return (
-    <select
-      aria-label={`Status for ${task.title}`}
+    <Select
+      label={`Status for ${task.title}`}
       value={task.status}
-      onChange={(event) => onChange(task.id, event.target.value as TaskStatus)}
-      className={`min-h-11 w-36 max-w-full rounded-lg border px-2 text-sm font-medium ${statusClasses[task.status]}`}
-    >
-      {TASK_STATUSES.map((status) => <option key={status} value={status}>{status}</option>)}
-    </select>
+      onChange={(value) => onChange(task.id, value as TaskStatus)}
+      options={statusOptions}
+      className="max-w-44"
+      toneClassName={statusClasses[task.status]}
+    />
   )
 }

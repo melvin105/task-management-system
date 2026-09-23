@@ -27,7 +27,7 @@ export function TaskList({ tasks, hasTasks, onClearFilters, onEdit, onDelete, on
   return (
     <ul className="divide-y divide-slate-100">
       {tasks.map((task) => (
-        <li key={task.id} className="grid gap-4 px-5 py-5 sm:px-6 lg:grid-cols-[minmax(0,1fr)_9rem_8rem_9rem] lg:items-center">
+        <li key={task.id} className="grid gap-4 px-5 py-5 sm:px-6 lg:grid-cols-[minmax(0,1fr)_10.5rem_8rem_10rem] lg:items-center">
           <div className="min-w-0">
             <h3 className="wrap-break-word text-sm font-semibold leading-6 text-slate-900">{task.title}</h3>
             <p className="mt-1 max-w-2xl wrap-break-word text-sm leading-6 text-slate-500">{task.description}</p>

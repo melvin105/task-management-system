@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 import type { FormEvent } from 'react'
-import { TASK_STATUSES } from '../../types/task'
+import { Select } from '../common/Select'
+import { statusOptions } from './statusOptions'
 import type { Task, TaskInput, TaskStatus } from '../../types/task'
 import { Modal } from '../common/Modal'
 
@@ -56,9 +57,7 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
         </div>
         <div>
           <label htmlFor={`${id}-status`} className="text-sm font-medium">Status</label>
-          <select id={`${id}-status`} name="status" value={status} onChange={(event) => setStatus(event.target.value as TaskStatus)} required className={fieldClassName}>
-            {TASK_STATUSES.map((option) => <option key={option} value={option}>{option}</option>)}
-          </select>
+          <Select id={`${id}-status`} name="status" label="Task status" value={status} onChange={(value) => setStatus(value as TaskStatus)} options={statusOptions} className="mt-2" />
         </div>
         <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
           <button type="button" onClick={onClose} className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button>

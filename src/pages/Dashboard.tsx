@@ -109,7 +109,7 @@ export function Dashboard() {
           <p role="status" aria-atomic="true" className="border-b border-slate-100 px-5 py-3 text-xs text-slate-500 sm:px-6">
             Showing {visibleTasks.length} of {tasks.length} tasks. Overview counts include all tasks.
           </p>
-          <div aria-hidden="true" className="hidden grid-cols-[minmax(0,1fr)_9rem_8rem_9rem] gap-4 border-b border-slate-100 bg-slate-50/70 px-6 py-3 text-xs font-medium text-slate-500 lg:grid">
+          <div aria-hidden="true" className="hidden grid-cols-[minmax(0,1fr)_10.5rem_8rem_10rem] gap-4 border-b border-slate-100 bg-slate-50/70 px-6 py-3 text-xs font-medium text-slate-500 lg:grid">
             <span>Task</span>
             <span>Status</span>
             <span>Created date</span>
