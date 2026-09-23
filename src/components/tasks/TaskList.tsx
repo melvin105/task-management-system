@@ -1,9 +1,14 @@
-import { CalendarDays, ClipboardList } from 'lucide-react'
+import { CalendarDays, ClipboardList, Pencil } from 'lucide-react'
 import type { Task } from '../../types/task'
 import { formatDate } from '../../utils/formatDate'
 import { StatusBadge } from './StatusBadge'
 
-export function TaskList({ tasks }: { tasks: Task[] }) {
+interface TaskListProps {
+  tasks: Task[]
+  onEdit: (task: Task) => void
+}
+
+export function TaskList({ tasks, onEdit }: TaskListProps) {
   if (tasks.length === 0) {
     return (
       <div className="px-6 py-16 text-center">
@@ -17,7 +22,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
   return (
     <ul className="divide-y divide-slate-100">
       {tasks.map((task) => (
-        <li key={task.id} className="grid gap-4 px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_9rem_9rem] md:items-center md:gap-6">
+        <li key={task.id} className="grid gap-4 px-5 py-5 sm:px-6 md:grid-cols-[minmax(0,1fr)_8rem_8rem_4rem] md:items-center">
           <div className="min-w-0">
             <h3 className="wrap-break-word text-sm font-semibold leading-6 text-slate-900">{task.title}</h3>
             <p className="mt-1 max-w-2xl wrap-break-word text-sm leading-6 text-slate-500">{task.description}</p>
@@ -28,6 +33,9 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
             <span className="sr-only">Created on </span>
             <time dateTime={task.createdDate}>{formatDate(task.createdDate)}</time>
           </div>
+          <button type="button" onClick={() => onEdit(task)} aria-label={`Edit task: ${task.title}`} className="inline-flex min-h-11 items-center justify-center gap-2 justify-self-start rounded-lg px-2 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-teal-800 md:justify-self-end">
+            <Pencil size={15} aria-hidden="true" /> Edit
+          </button>
         </li>
       ))}
     </ul>

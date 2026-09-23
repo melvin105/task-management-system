@@ -9,3 +9,5 @@ export interface Task {
   status: TaskStatus
   createdDate: string
 }
+
+export type TaskInput = Pick<Task, 'title' | 'description' | 'status'>

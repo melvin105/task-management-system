@@ -1,9 +1,29 @@
-import { ListTodo } from 'lucide-react'
+import { useState } from 'react'
+import { ListTodo, Plus } from 'lucide-react'
 import { TaskStats } from '../components/dashboard/TaskStats'
 import { TaskList } from '../components/tasks/TaskList'
 import { initialTasks } from '../data/tasks'
+import { TaskForm } from '../components/tasks/TaskForm'
+import type { Task, TaskInput } from '../types/task'
 
 export function Dashboard() {
+  const [tasks, setTasks] = useState<Task[]>(initialTasks)
+  const [editor, setEditor] = useState<{ task?: Task } | null>(null)
+  const [announcement, setAnnouncement] = useState('')
+
+  function saveTask(values: TaskInput) {
+    const editingTask = editor?.task
+    if (editingTask) {
+      setTasks((current) => current.map((task) => task.id === editingTask.id ? { ...task, ...values } : task))
+      setAnnouncement(`Updated task: ${values.title}.`)
+    } else {
+      const newTask: Task = { ...values, id: crypto.randomUUID(), createdDate: new Date().toISOString() }
+      setTasks((current) => [newTask, ...current])
+      setAnnouncement(`Created task: ${values.title}.`)
+    }
+    setEditor(null)
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <a href="#main-content" className="sr-only rounded-lg bg-white px-4 py-3 text-teal-800 focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-10 focus:ring-2 focus:ring-teal-700">
@@ -28,7 +48,13 @@ export function Dashboard() {
           <p className="mt-3 text-sm leading-6 text-slate-500 sm:text-base">A little structure. A clearer day. Keep track of what needs to get done.</p>
         </div>
 
-        <TaskStats tasks={initialTasks} />
+        <div className="mb-6 flex justify-end">
+          <button type="button" onClick={() => setEditor({})} className="inline-flex items-center gap-2 rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-teal-800">
+            <Plus size={18} aria-hidden="true" /> Add task
+          </button>
+        </div>
+        <TaskStats tasks={tasks} />
+        <p role="status" className="sr-only">{announcement}</p>
 
         <section aria-labelledby="tasks-heading" className="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white">
           <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-5 sm:px-6">
@@ -36,19 +62,21 @@ export function Dashboard() {
               <h2 id="tasks-heading" className="font-semibold">All tasks</h2>
               <p className="mt-1 text-sm text-slate-500">Everything on your list, in one place.</p>
             </div>
-            <span className="shrink-0 rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{initialTasks.length} tasks</span>
+            <span className="shrink-0 rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}</span>
           </div>
-          <div aria-hidden="true" className="hidden grid-cols-[minmax(0,1fr)_9rem_9rem] gap-6 border-b border-slate-100 bg-slate-50/70 px-6 py-3 text-xs font-medium text-slate-500 md:grid">
+          <div aria-hidden="true" className="hidden grid-cols-[minmax(0,1fr)_8rem_8rem_4rem] gap-4 border-b border-slate-100 bg-slate-50/70 px-6 py-3 text-xs font-medium text-slate-500 md:grid">
             <span>Task</span>
             <span>Status</span>
             <span>Created date</span>
+            <span className="text-right">Actions</span>
           </div>
-          <TaskList tasks={initialTasks} />
+          <TaskList tasks={tasks} onEdit={(task) => setEditor({ task })} />
         </section>
         <footer className="mt-6 text-center text-xs leading-5 text-slate-500">
           A little progress, every day.
         </footer>
       </main>
+      {editor && <TaskForm key={editor.task?.id ?? 'new'} task={editor.task} onSave={saveTask} onClose={() => setEditor(null)} />}
     </div>
   )
 }

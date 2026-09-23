@@ -10,9 +10,14 @@ Built with React, TypeScript, Vite, Tailwind CSS, Lucide icons, and ESLint.
 - Task title, description, status, and created date
 - Total, pending, in-progress, and completed counts calculated from task data
 - Reusable statistics cards, status badges, and task list
+- Add and edit tasks through a shared form, including task status
+- Trimmed, validated titles and descriptions with inline error messages
+- Keyboard-accessible dialog with Escape to close and Cancel to discard changes
 
-This checkpoint is read-only. Task creation, editing, deletion, and status changes
-will follow. All data is local mock data; no backend or API is used.
+Tasks are held in React state, starting with local mock data; no backend or API is used.
+Changes last for the current page session and reset on refresh. New tasks receive a unique
+ID and creation timestamp. Editing preserves both. Statistics update immediately after saving.
+Deletion and direct status controls will follow in the next checkpoint.
 
 ## Requirements
 
@@ -45,8 +50,9 @@ npm run preview
 ```text
 src/
   components/
+    common/     Reusable native modal dialog
     dashboard/  Reusable statistics cards and calculated task statistics
-    tasks/      Task list and status badge
+    tasks/      Task list, status badge, and add/edit form
   data/         Typed mock tasks
   pages/        Dashboard page composing the components
   types/        Shared task model and supported statuses
