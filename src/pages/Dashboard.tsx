@@ -1,15 +1,33 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { ListTodo, Plus } from 'lucide-react'
 import { TaskStats } from '../components/dashboard/TaskStats'
 import { TaskList } from '../components/tasks/TaskList'
 import { initialTasks } from '../data/tasks'
 import { TaskForm } from '../components/tasks/TaskForm'
-import type { Task, TaskInput } from '../types/task'
+import type { Task, TaskInput, TaskStatus } from '../types/task'
+import { DeleteTaskDialog } from '../components/tasks/DeleteTaskDialog'
 
 export function Dashboard() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
   const [editor, setEditor] = useState<{ task?: Task } | null>(null)
   const [announcement, setAnnouncement] = useState('')
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null)
+  const addButtonRef = useRef<HTMLButtonElement>(null)
+
+  function changeStatus(id: string, status: TaskStatus) {
+    setTasks((current) => current.map((task) => task.id === id ? { ...task, status } : task))
+    const task = tasks.find((item) => item.id === id)
+    if (task) setAnnouncement(`Updated ${task.title} to ${status}.`)
+  }
+
+  function deleteTask() {
+    if (!taskToDelete) return
+    setTasks((current) => current.filter((task) => task.id !== taskToDelete.id))
+    setAnnouncement(`Deleted task: ${taskToDelete.title}.`)
+    setTaskToDelete(null)
+    // The delete trigger is removed with its task; return focus to a stable control.
+    requestAnimationFrame(() => addButtonRef.current?.focus())
+  }
 
   function saveTask(values: TaskInput) {
     const editingTask = editor?.task
@@ -49,7 +67,7 @@ export function Dashboard() {
         </div>
 
         <div className="mb-6 flex justify-end">
-          <button type="button" onClick={() => setEditor({})} className="inline-flex items-center gap-2 rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-teal-800">
+          <button ref={addButtonRef} type="button" onClick={() => setEditor({})} className="inline-flex items-center gap-2 rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-teal-800">
             <Plus size={18} aria-hidden="true" /> Add task
           </button>
         </div>
@@ -64,19 +82,20 @@ export function Dashboard() {
             </div>
             <span className="shrink-0 rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}</span>
           </div>
-          <div aria-hidden="true" className="hidden grid-cols-[minmax(0,1fr)_8rem_8rem_4rem] gap-4 border-b border-slate-100 bg-slate-50/70 px-6 py-3 text-xs font-medium text-slate-500 md:grid">
+          <div aria-hidden="true" className="hidden grid-cols-[minmax(0,1fr)_9rem_8rem_9rem] gap-4 border-b border-slate-100 bg-slate-50/70 px-6 py-3 text-xs font-medium text-slate-500 lg:grid">
             <span>Task</span>
             <span>Status</span>
             <span>Created date</span>
             <span className="text-right">Actions</span>
           </div>
-          <TaskList tasks={tasks} onEdit={(task) => setEditor({ task })} />
+          <TaskList tasks={tasks} onEdit={(task) => setEditor({ task })} onDelete={setTaskToDelete} onStatusChange={changeStatus} />
         </section>
         <footer className="mt-6 text-center text-xs leading-5 text-slate-500">
           A little progress, every day.
         </footer>
       </main>
       {editor && <TaskForm key={editor.task?.id ?? 'new'} task={editor.task} onSave={saveTask} onClose={() => setEditor(null)} />}
+      {taskToDelete && <DeleteTaskDialog task={taskToDelete} onConfirm={deleteTask} onClose={() => setTaskToDelete(null)} />}
     </div>
   )
 }
